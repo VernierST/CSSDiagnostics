@@ -85,19 +85,25 @@ class CSSDiagnostics:
             pass
         
         self.win = gtk.Window()
+        self.win.set_size_request(550, 650)
         self.win.connect("destroy", self.die_nicely)
         self.win.set_title("Connected Science System Diagnostic Tool from Vernier Software & Technology")
         self.vbox = gtk.VBox()
         self.win.add(self.vbox)
         
-        self.top_hbox = gtk.HBox()
-        self.vbox.pack_start(self.top_hbox)
+        helpbox_lbl = "Testing your network requires that a Vernier Data Sharing source be running, \n"
+        helpbox_lbl += "as this utility must connect to that source to complete the test.\n\n"
+        helpbox_lbl += "If using Logger Pro as a Data Sharing source: Confirm that the sharing computer \n"
+        helpbox_lbl += "is connected to the same network as this test computer. Launch Logger Pro on the \n"
+        helpbox_lbl += "sharing computer and enable Data Sharing from the File menu. Prevent the sharing \n"
+        helpbox_lbl += "computer from sleeping for the duration of the test.\n\n"
+        helpbox_lbl += "If using a LabQuest 2 as a Data Sharing source: Confirm that the LabQuest is \n"
+        helpbox_lbl += "connected to the same network as this test computer. Enable Data Sharing on the \n"
+        helpbox_lbl += "LabQuest by tapping Home, then Connections, then Vernier Data Share. Prevent the \n"
+        helpbox_lbl += "LabQuest from sleeping for the duration of the test by connecting it to external power."
         
-        self.diag_lbl = gtk.Label("Network Diagnostics")
-        self.top_hbox.pack_start(self.diag_lbl,False,False,5)
-        self.run_btn = gtk.Button("Start")
-        self.run_btn.connect("clicked", self.run_tests)
-        self.top_hbox.pack_start(self.run_btn,False,False,5)
+        self.helpbox = gtk.Label(helpbox_lbl)
+        self.vbox.pack_start(self.helpbox,False,False,10)
         
         self.information_hbox = gtk.HBox()
         self.datashare_frame = gtk.Frame("Data Sharing Source (LabQuest 2 or Logger Pro)")
@@ -155,6 +161,13 @@ class CSSDiagnostics:
         self.local_ip.set_text(str(self.local.ip))
         self.local_netmask.set_text(str(self.local.netmask))
         
+        self.top_hbox = gtk.HBox()
+        self.vbox.pack_start(self.top_hbox,False,False,5)
+        
+        self.run_btn = gtk.Button("Start Diagnostics")
+        self.run_btn.connect("clicked", self.run_tests)
+        self.top_hbox.pack_start(self.run_btn,False,False,5)
+        
         self.test_frame = gtk.Frame("Tests")
         self.vbox.pack_start(self.test_frame)
         self.tests_vbox = gtk.VBox()
@@ -192,7 +205,7 @@ class CSSDiagnostics:
         self.check_for_isolation_mode_icon.set_from_stock(gtk.STOCK_MEDIA_PLAY, gtk.ICON_SIZE_MENU)
         check_for_isolation_mode_hbox = gtk.HBox()
         check_for_isolation_mode_hbox.pack_start(self.check_for_isolation_mode_icon,False,False,5)
-        check_for_isolation_mode_hbox.pack_start(gtk.Label("Test for AP Isolation Mode on the WiFi Access Point"),False,False,5)
+        check_for_isolation_mode_hbox.pack_start(gtk.Label("Verify AP Isolation Mode is disabled on the WiFi Access Point"),False,False,5)
         self.tests_vbox.add(check_for_isolation_mode_hbox) 
         
         self.check_connect_by_ip_icon = gtk.Image()
@@ -239,8 +252,9 @@ class CSSDiagnostics:
 
         self.error_frame = gtk.Frame("Details")
         self.error_lbl = gtk.Label("")
+        self.error_lbl.set_line_wrap(True)
         self.error_frame.add(self.error_lbl)
-        self.vbox.pack_start(self.error_frame)
+        self.vbox.pack_start(self.error_frame,True,True)
         
         self.log_frame = gtk.Frame("Log File")
         try:
